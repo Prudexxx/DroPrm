@@ -246,9 +246,55 @@ label{
   margin: 0;
   padding: 0;
 }
+/* Стили для цееннаааааааааааа */
+
+
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Стиль карточек */
+    .card {
+      flex: 1 1 300px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      max-width: 350px;
+    }
+    .min{
+      display: none;
+    }
+    
+    /* Адаптивные стили для мини экранов */
+ @media (max-width: 768px) {
+  .max{
+        display: none;
+      }
+  .min{
+      display: block;
+    }
+ }
+    /* Адаптивные стили для больших экранов */
+    @media (min-width: 768px) {
+      .cards-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+        
+      }
+     
+    }
 </style>
 </head>
-<body>
+
 
 <header>
   <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
@@ -261,7 +307,7 @@ label{
     <a href="https://vk.com/samosvalchik_rf" target="_blank" style="text-decoration: none; margin-right: 5px; font-size: 24px;color:yellow;">
     <i class="fab fa-vk"></i>
   </a>
-  <a href="https://t.me/Samosvalchik2031015" target="_blank" style="text-decoration: none; margin-right: 5px; font-size: 24px; color:yellow;">
+  <a href="https://t.me/mihailov85" target="_blank" style="text-decoration: none; margin-right: 5px; font-size: 24px; color:yellow;">
     <i class="fab fa-telegram-plane"></i>
   </a>
 </div>
@@ -299,40 +345,14 @@ label{
 
                                                                          <!-- Контентные ЦЕНА -->
 <div id="mainContent">
-  <h2 style="font-size: 300%; font-weight: bold;">Доставка дров в Перми</h2>
-  <p style="font-size: 150%; font-weight: bold;">Гост 3243-88/быстрая доставка/честный объем/дрова сухие</p>
-  <style>
-    /* Общие стили для контейнера */
-    .cards-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 20px;
-      justify-content: center;
-      padding: 40px;
-      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-      font-family: 'Arial', sans-serif;
-    }
-
-    /* Стиль карточек */
-    .card {
-      flex: 1 1 300px;
-      background: #fff;
-      border-radius: 15px;
-      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-      overflow: hidden;
-      transition: transform 0.3s, box-shadow 0.3s;
-      max-width: 350px;
-    }
-
-    /* Адаптивные стили для больших экранов */
-    @media (min-width: 768px) {
-      .cards-container {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 20px;
-      }
-    }
-  </style>
+  <div class="max">
+    <h2 style="font-size: 300%; font-weight: bold;">Доставка дров в Перми</h2>
+    <p style="font-size: 150%; font-weight: bold;">Гост 3243-88/быстрая доставка/честный объем/дрова сухие</p>
+  </div>
+   <div class="min">
+    <h2 style="font-size: 300%; margin: 0; font-weight: bold;">Доставка дров в Перми</h2>
+    <p style="font-size: 150%; font-weight: bold; text-align: left;">&#8226  Дрова сухие Гост 3243-88 <br> &#8226  быстрая доставка <br>&#8226  честный объем</p>
+  </div>
   <div class="cards-container">
     <!-- Товар 0 -->
     <div class="card">
@@ -509,6 +529,7 @@ label{
 
 </body>
 </html>
+
 
 
 
