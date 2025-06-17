@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<title>Дрова в Перми</title>
+<style>
+
+ 
+  /* Общие стили */
+  body {
+    padding-top: 60px;
+    margin: 0;
+    font-family: Arial, sans-serif;
+  }
+
+  /* Шапка - фиксированная */
+  header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #333;
+    padding: 10px 20px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-sizing: border-box;
+  }
+  .logo {
+    color: #fff;
+    font-size: 20px;
+  }
+  /* Гамбургер */
+  .burger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-between;
+    width: 25px;
+    height: 18px;
+    cursor: pointer;
+  }
+  .burger span {
+    display: block;
+    height: 3px;
+    background-color: #fff;
+    border-radius: 2px;
+  }
+
+  /* Меню для десктопа */
+  nav {
+    display: flex;
+    gap: 15px;
+  }
+  nav a {
+    color: #fff;
+    text-decoration: none;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+  #linkPrice {
+    border: 1px solid #fff;
+  }
+  #linkPrice:hover {
+    background-color: #fff;
+    color: #000;
+  }
+
+  /* Мобильное меню */
+  @media (max-width: 768px) {
+  
+    nav {
+      display: none;
+    }
+    .burger {
+      display: flex;
+    }
+    #overlay {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background-color: rgba(0,0,0,0.8);
+      display: none;
+      z-index: 1000;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    #overlay.active {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    #overlay nav {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 50px;
+    }
+    #overlay nav a {
+      color: #fff;
+      font-size: 24px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+  }
+  
+  #mainContent{
+    padding-top: 80px;
+  }
+
+  /* Контент блоки – чтобы не скрывались, добавим padding, чтобы не под шапкой */
+  /* Каждый блок снизу будет отступом для прокрутки */
+#mainContent,
+#aboutContent,
+#servicesContent,
+#contactsContent,
+#priceContent {
+  width: 100%;
+
+  margin: 0;
+  padding: 20px 20px 20px 20px; /* отступ снизу, чтобы не уходил под фиксированную шапку */
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: Arial, sans-serif;
+  text-align: center;
+}
+
+/* Разные фоны для наглядности */
+#contactsContent {   height: 100vh; }
+#mainContent { 
+ 
+ }
+ /* Стили для ДОСТАВКИ ---------------------------------------------------*/
+#aboutContent { 
+    height: 100vh;
+   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url("Дрова\ с\ комаза.jpg"); background-size: cover; background-position: center; background-repeat: no-repeat; 
+ color: #a5a5a5;
+  font-size:250%;
+  font-weight: bold;
+  }
+ #infoBtn {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  /* чтобы было проще — ширина по содержимому */
+  display: inline-block;
+}
+
+#infoBox {
+  margin-top: 10px;
+  height: 50px; /* высота, можно подогнать */
+  overflow: hidden;
+  background-color: #eef;
+  width: fit-content; /* чтобы ширина совпадала с содержимым */
+  border: 1px solid #99c;
+  padding: 10px;
+  box-sizing: border-box;
+  transition: height 0.3s ease, width 0.3s ease;
+}
+
+/* чтобы скрывать */
+.hidden {
+  height: 0;
+  padding: 0;
+  border: none;
+}
+
+.adaptive-button {
+  padding: 10px 20px;
+  width: 250  px;
+}
+#toggleBtn{
+font-size: 20px;
+}
+
+/* Для больших экранов */
+@media (min-width: 900px) {
+  .adaptive-button {
+    width: 700px;
+  }
+  .sylki a{
+    margin-right: 15px;
+  }
+}
+
+/* Конец  Стили для Доставки */
+
+
+/* Стили для контакта --------------------------------------------------------*/
+
+
+#servicesContent {
+ height: 100vh;
+  margin-top: 0;
+  padding-top: 0;
+ 
+}
+#servicesContent p{
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start; /* по умолчанию так */
+  align-items: stretch; /* чтобы растянуть содержимое по ширине */
+}
+
+
+/* Конец Стили для контакта */
+
+/* Cтили для звказа------------------------------------------------------- */
+#feedbackForm input[type="number"],
+#feedbackForm select,
+#feedbackForm button {
+  width: 100%; /* чтобы все элементы резались в ширину контейнера */
+  box-sizing: border-box; /* чтобы padding и border учитывались в ширине */
+  height: 40px; /* одинаковая высота для всех элементов */
+  padding: 8px 12px; /* внутренние отступы */
+  font-size: 16px; /* шрифт, чтобы выглядело аккуратно */
+  margin-bottom: 10px; /* расстояние между элементами */
+  margin-top: 10px; /* расстояние между элементами */
+}
+#priceContent {
+   background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url("дрова\ для\ заказа.jpg"); background-size: cover; background-position: center; background-repeat: no-repeat; 
+    color: #a5a5a5; 
+   height: 100v;
+   
+  } 
+label{
+   font-size: 1.5rem;
+  
+   
+}
+.zakaz{
+  font-size: 250%;
+  font-weight: bold;
+}
+/* конец Cтили для звказа */
+
+#mapContainer {
+  width: 100vw;      /* на всю ширину окна браузера */
+  height: 100vh;     /* на всю высоту окна браузера */
+  margin: 0;
+  padding: 0;
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div style="display:flex; align-items:center; justify-content:space-between; width:100%;">
+    <h1 class="logo">Дрова в Перми</h1>
+
+<div class="sylki">
+     <a href="tel:+79120611015" style="text-decoration:none; font-size:24px;margin-right: 5px; color:yellow;">
+  <i class="fas fa-phone"></i>
+</a>
+    <a href="https://vk.com/samosvalchik_rf" target="_blank" style="text-decoration: none; margin-right: 5px; font-size: 24px;color:yellow;">
+    <i class="fab fa-vk"></i>
+  </a>
+  <a href="https://t.me/mihailov85" target="_blank" style="text-decoration: none; margin-right: 5px; font-size: 24px; color:yellow;">
+    <i class="fab fa-telegram-plane"></i>
+  </a>
+</div>
+    <!-- Гамбургер -->
+    <div class="burger" id="burger" aria-label="Меню" aria-expanded="false" role="button" tabindex="0">
+      
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <!--Навигационное меню для десктопа-->
+  <nav>
+    <a href="#" id="linkMain" data-target="mainContent">Цены</a>
+    <a href="#" id="linkAbout" data-target="aboutContent">Доставка</a>
+    <a href="#" id="linkContacts" data-target="contactsContent">Отзывы</a>
+       <a href="#" id="linkPrice" data-target="priceContent">Заказ</a>
+    <a href="#" id="linkServices" data-target="priceContent"></a>
+   
+  </nav>
+</header>
+
+<!-- Мобильная шторка -->
+<div id="overlay">
+  <nav>
+    <a href="#" id="mobLinkMain" data-target="mainContent">Цены</a>
+    <a href="#" id="mobLinkAbout" data-target="aboutContent">Доставка</a>
+    <a href="#" id="mobLinkContacts" data-target="contactsContent">Отзывы</a>
+    <a href="#" id="mobLinkPrice" data-target="priceContent">Заказ</a>
+    <a href="#" id="mobLinkServices" data-target="servicesContent"></a>
+     
+  </nav>
+</div>
+<!-- /////////////////////////////////////БЛОКИИ...................................... -->
+
+                                                                         <!-- Контентные ЦЕНА -->
+<div id="mainContent">
+  <h2 style="font-size: 300%; font-weight: bold;">Доставка дров в Перми</h2>
+  <p style="font-size: 150%; font-weight: bold;">Гост 3243-88/быстрая доставка/честный объем/сухие</p>
+  <style>
+    /* Общие стили для контейнера */
+    .cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding: 40px;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      font-family: 'Arial', sans-serif;
+    }
+
+    /* Стиль карточек */
+    .card {
+      flex: 1 1 300px;
+      background: #fff;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      max-width: 350px;
+    }
+
+    /* Адаптивные стили для больших экранов */
+    @media (min-width: 768px) {
+      .cards-container {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
+      }
+    }
+  </style>
+  <div class="cards-container">
+    <!-- Товар 0 -->
+    <div class="card">
+      <img src="Береза.PNG" alt="Товар 1" style="width: 100%; height: auto; object-fit: cover;">
+      <div style="padding: 20px; text-align: center;"><br>
+        <h3 style="margin-top: 0; font-size: 1.5em; color: #333;">Дрова колотые</h3>
+        <p style="color: #777; font-size: 1em;">Береза</p>
+        <div style="margin-top: 15px;">
+          <span style="font-size: 1.3em; font-weight: bold; color: #030303;">3500 руб/куб</span>
+        </div>
+        <a href="#priceContent">
+          <button style="margin-top: 15px; padding: 12px 25px; border: none; border-radius: 50px; background-color: #000000; color: #fff; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
+            Заказать
+          </button>
+        </a>
+      </div>
+    </div>
+    <!-- Товар 1 -->
+    <div class="card">
+      <img src="ДроваКолотые.PNG" alt="Товар 1" style="width: 100%; height: auto; object-fit: cover;">
+      <div style="padding: 20px; text-align: center;"><br>
+        <h3 style="margin-top: 0; font-size: 1.5em; color: #333;">Дрова колотые</h3>
+        <p style="color: #777; font-size: 1em;">Смешанный лес</p>
+        <div style="margin-top: 15px;">
+          <span style="font-size: 1.3em; font-weight: bold; color: #030303;">3000 руб/куб</span>
+        </div>
+        <a href="#priceContent">
+          <button style="margin-top: 15px; padding: 12px 25px; border: none; border-radius: 50px; background-color: #020202; color: #fff; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
+            Заказать
+          </button>
+        </a>
+      </div>
+    </div>
+    <!-- Товар 2 -->
+    <div class="card">
+      <img src="ДроваПИленные.PNG" alt="Товар 2" style="width: 100%; height: auto; object-fit: cover;">
+      <div style="padding: 20px; text-align: center;">
+        <h3 style="margin-top: 0; font-size: 1.5em; color: #333;">Дрова пиленые</h3>
+        <p style="color: #777; font-size: 1em;">Береза, смешанный лес</p>
+        <div style="margin-top: 15px;">
+          <span style="font-size: 1.3em; font-weight: bold; color: #000000;">от 2000 руб/куб</span>
+        </div>
+        <a href="#priceContent">
+          <button style="margin-top: 15px; padding: 12px 25px; border: none; border-radius: 50px; background-color: #000000; color: #fff; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
+            Заказать
+          </button>
+        </a>
+      </div>
+    </div>
+    <!-- Товар 3 -->
+    <div class="card">
+      <img src="Горбыль.PNG" alt="Товар 3" style="width: 100%; height: auto; object-fit: cover;">
+      <div style="padding: 20px; text-align: center;"><br><br>  
+        <h3 style="margin-top: 0; font-size: 1.5em; color: #333;">Горбыль</h3>
+        <p style="color: #777; font-size: 1em;">3 метра, пиленный на дрова</p>
+        <div style="margin-top: 15px;">
+          <span style="font-size: 1.3em; font-weight: bold; color: #000000;">от 1000 руб/куб</span>
+        </div>
+        <a href="#priceContent">
+          <button style="margin-top: 15px; padding: 12px 25px; border: none; border-radius: 50px; background-color: #030303; color: #fff; font-size: 1em; cursor: pointer; transition: background-color 0.3s;">
+            Заказать
+          </button>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+                                                                          <!-- Контентные ДОСТАВКА -->
+<div id="aboutContent">Доставка
+ в следующих населённых пунктах Перми:</p>
+<div style="display: inline-block; position: relative;">
+  <button id="toggleBtn" class="adaptive-button ">Доставка по Перми и пригороду </button>
+  <div id="info" style="
+    position: absolute;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    overflow: hidden;
+    max-height: 0;
+    background-color: #eef;
+    border: 1px solid #99c;
+    transition: max-height 0.3s ease;
+    box-sizing: border-box;
+    padding: 0 10px;
+  ">
+    <p style="font-size: 25px; font-weight:bold; color:#000;"> Доставка бесплатная от 5 кубов. <br> Менее 5 кубов 2000р. <br>До 50 км от центра Перми. <br>Более уточнять у менеджера.</p>
+  </div>  
+</div>
+
+</div>
+
+
+
+
+                                                                          <!-- Контентные Отзывы --> 
+<div id="contactsContent" style="background-image:linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.8)), url(ДроваОтзывы.jpg) ;background-size: cover; background-position: center; background-repeat: no-repeat; height: 100vh;" >
+<div style="max-width: 900px; margin: 20px auto; font-family: Arial, sans-serif;">
+  <h2 style="text-align: center; margin-bottom: 20px;  color: #a5a5a5;
+  font-size:200%;">Отзывы наших клиентов</h2>
+  <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+    <!-- Отзыв 1 -->
+    <div style="flex: 1 1 280px; background-color: #f0f0f0; padding: 15px; border-radius: 8px;">
+      <h3 style="margin-top: 0;">
+Ирина Александровна</h3>
+      <p style="font-style: italic;">"Заказывали дрова, привезли в срок, все по размеру,как заказывали! спасибо!"</p>
+      <p style="margin: 0; font-size: 0.9em; color: #f8cb04;">★★★★★</p>
+    </div>
+    <!-- Отзыв 2 -->
+    <div style="flex: 1 1 280px; background-color: #f0f0f0; padding: 15px; border-radius: 8px;">
+      <h3 style="margin-top: 0;">
+Татьяна Антошина</h3>
+      <p style="font-style: italic;">"Однозначно буду рекомендовать ребят! Надежные и честные."</p>
+      <p style="margin: 0; font-size: 0.9em; color: #f8cb04;">★★★★★</p>
+    </div>
+    <!-- Отзыв 3 -->
+    <div style="flex: 1 1 280px; background-color: #f0f0f0; padding: 15px; border-radius: 8px;">
+      <h3 style="margin-top: 0;">Мария Л.</h3>
+      <p style="font-style: italic;">"Очень понравилось! Всё четко и удобно, спасибо!"</p>
+      <p style="margin: 0; font-size: 0.9em; color: #f8cb04;">★★★★★</p>
+    </div>
+
+  </div>
+</div>
+</div>
+
+                                                                           <!-- Контентные ЗАКАЗ-->
+
+<div id="priceContent">
+  <p class="zakaz">Заказажи обратный звонок <br>в ближайшее время  с вами свяжется менеджер</p>
+  <div class="form-container">
+
+    <form id="feedbackForm">
+      <label for="name">Телефон</label>
+      <input type="number" id="name" name="name" placeholder="Введите ваш номер" required maxlength="12" />
+      
+    
+      <label for="phone">Продукт</label>
+    
+
+  <select id="phone" name="phone" required  type="number" >
+    <option value="">Выберите продукт</option>
+    <option value="Дрова колотые 2500руб/куб">Дрова колотые береза 3500руб/куб</option>
+     <option value="Дрова колотые 2500руб/куб">Дрова колотые береза+смешанный 3000руб/куб</option>
+    <option value="Дрова (пиленые) от 2000 руб/куб">Дрова (пиленые)   2000 руб/куб</option>
+    <option value="Горбыль от 1000 руб/куб">Горбыль 1000 руб/куб</option>
+  </select>
+
+      <button type="submit" id="submitBtn">Отправить</button>
+    </form>
+    <a style="color: #f0f0f0;" href="https://prudexxx.github.io/politika/" target="_blank">Нажимая на кнопку вы соглашаетесь с политикой конфедициальности</a>
+       <div class="info">
+    <h3>Адрес</h3>
+    <p>  село Лобаново, ул. Центральная 11Б</p>
+    <h3>Отдел продаж</h3>
+    <p>	+7 (342) 203-10-15</p>
+    <h3>Почта</h3>
+    <p>	samosvalchikrf@gmail.com</p></div>
+  </div>
+                                                                            <!-- Контентные УСЛУГИ -->
+
+
+<script type="text/javascript" charset="utf-8" async src="https://api-maps.yandex.ru/services/constructor/1.0/js/?um=constructor%3A2d0d214bd1ea6a8396325a966e27eea48606e0182e2fbc714134a1e5318ba326&width=80%&height=400px&lang=ru_RU&scroll=true"></script>
+
+
+
+
+
+<script src="dostavka.js"></script>
+<script src="gamb.js"></script>
+<script src="telrgram.js"></script>
+<script src="gugl1.js"></script>
+
+</body>
+</html>
+
